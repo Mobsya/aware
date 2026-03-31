@@ -14,6 +14,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <boost/asio.hpp>
+#include <boost/asio/io_context.hpp>
 #include <boost/function.hpp>
 
 namespace aware {
@@ -22,7 +23,7 @@ namespace detail {
     template <typename Service>
     class non_closing_service : public Service {
     public:
-        non_closing_service(boost::asio::io_service& io) : Service(io) {}
+        non_closing_service(boost::asio::io_context& io) : Service(io) {}
 
         void destroy(typename Service::implementation_type&) {
             // Do not close the file descriptor as we have no ownership of it
@@ -36,7 +37,7 @@ namespace detail {
     public:
         typedef socket_type::native_handle_type native_handle_type;
 
-        native_socket(boost::asio::io_service&, native_handle_type);
+        native_socket(boost::asio::io_context&, native_handle_type);
         ~native_socket();
 
         template <typename Handler>

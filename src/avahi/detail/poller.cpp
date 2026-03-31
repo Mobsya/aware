@@ -12,7 +12,8 @@
 
 #include <cassert>
 #include <new> // std::nothrow
-#include <boost/asio/io_service.hpp>
+#include <boost/asio/io_context.hpp>
+#include <boost/asio/steady_timer.hpp>
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
@@ -28,7 +29,7 @@
 // This struct must be in global namespace
 struct AvahiWatch
 {
-    AvahiWatch(boost::asio::io_service& io,
+    AvahiWatch(boost::asio::io_context& io,
                int fd,
                AvahiWatchEvent event,
                AvahiWatchCallback callback,
@@ -169,7 +170,7 @@ struct AvahiTimeout
 class avahi_timer : public boost::enable_shared_from_this<avahi_timer>
 {
 public:
-    static boost::shared_ptr<avahi_timer> create(boost::asio::io_service& io,
+    static boost::shared_ptr<avahi_timer> create(boost::asio::io_context& io,
                                                  const struct timeval *tv,
                                                  AvahiTimeoutCallback callback,
                                                  void *userdata)
@@ -183,7 +184,7 @@ public:
         return result;
     }
 
-    avahi_timer(boost::asio::io_service& io,
+    avahi_timer(boost::asio::io_context& io,
                 AvahiTimeoutCallback callback,
                 void *userdata)
         : resource(0),
@@ -221,7 +222,7 @@ public:
         {
             const AvahiUsec deadline = ((tv->tv_sec == 0) && (tv->tv_usec == 0)) ? 0 : -avahi_age(tv);
             boost::system::error_code dummy;
-            timer.expires_from_now(boost::posix_time::microseconds(deadline), dummy);
+            timer.expires_after(std::chrono::microseconds(deadline));
             timer.async_wait(boost::bind(&avahi_timer::process_timeout,
                                          shared_from_this(),
                                          boost::asio::placeholders::error));
@@ -249,7 +250,7 @@ public:
     }
 
     AvahiTimeout *resource;
-    boost::asio::deadline_timer timer;
+    boost::asio::steady_timer timer;
     AvahiTimeoutCallback callback;
     void *userdata;
 };
@@ -305,7 +306,7 @@ namespace avahi
 namespace detail
 {
 
-poller::poller(boost::asio::io_service& io)
+poller::poller(boost::asio::io_context& io)
     : io(io)
 {
     userdata = this;
@@ -318,7 +319,7 @@ poller::poller(boost::asio::io_service& io)
     timeout_free = &aware_avahi_timeout_free;
 }
 
-boost::asio::io_service& poller::get_io_service() const
+boost::asio::io_context& poller::get_io_service() const
 {
     return io;
 }

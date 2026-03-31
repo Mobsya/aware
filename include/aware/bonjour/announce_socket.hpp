@@ -30,7 +30,7 @@ namespace bonjour {
 
     class announce_socket : public aware::announce_socket_base {
     public:
-        announce_socket(boost::asio::io_service&);
+        announce_socket(boost::asio::io_context&);
 
         virtual void async_announce(aware::contact& contact, async_announce_handler);
 
@@ -40,7 +40,7 @@ namespace bonjour {
         void invoke(const boost::system::error_code&, async_announce_handler);
 
     private:
-        boost::asio::io_service& io;
+        boost::asio::io_context& io;
         detail::handle connection;
         aware::detail::native_socket socket;
         bool waiting;

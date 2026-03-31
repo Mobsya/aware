@@ -24,7 +24,7 @@ namespace aware
 namespace bonjour
 {
 
-monitor_socket::monitor_socket(boost::asio::io_service& io)
+monitor_socket::monitor_socket(boost::asio::io_context& io)
     : io(io),
       connection(detail::handle::with_connection),
       socket(io, connection.native_handle()),
@@ -46,10 +46,11 @@ void monitor_socket::async_listen(aware::contact& contact,
     }
     if (permanent_error)
     {
-        io.post(boost::bind(&monitor_socket::invoke,
-                            this,
-                            permanent_error,
-                            handler));
+        boost::asio::post(io,
+                          boost::bind(&monitor_socket::invoke,
+                                      this,
+                                      permanent_error,
+                                      handler));
         return;
     }
 
@@ -78,10 +79,11 @@ void monitor_socket::async_listen(aware::contact& contact,
     }
     catch (const boost::system::system_error& ex)
     {
-        io.post(boost::bind(&monitor_socket::invoke,
-                            this,
-                            ex.code(),
-                            handler));
+        boost::asio::post(io,
+                          boost::bind(&monitor_socket::invoke,
+                                      this,
+                                      ex.code(),
+                                      handler));
     }
     // Other exceptions are propagated outwards
 }

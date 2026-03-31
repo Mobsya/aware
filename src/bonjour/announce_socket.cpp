@@ -24,7 +24,7 @@ namespace aware
 namespace bonjour
 {
 
-announce_socket::announce_socket(boost::asio::io_service& io)
+announce_socket::announce_socket(boost::asio::io_context& io)
     : io(io),
       connection(detail::handle::with_connection),
       socket(io, connection.native_handle()),
@@ -39,10 +39,11 @@ void announce_socket::async_announce(aware::contact& contact,
     {
         using namespace boost::system;
         error_code irrecoverable(errc::state_not_recoverable, system_category());
-        io.post(boost::bind(&announce_socket::invoke,
-                            this,
-                            irrecoverable,
-                            handler));
+        boost::asio::post(io,
+                          boost::bind(&announce_socket::invoke,
+                                      this,
+                                      irrecoverable,
+                                      handler));
         return;
     }
 
@@ -71,10 +72,11 @@ void announce_socket::async_announce(aware::contact& contact,
     }
     catch (const boost::system::system_error& ex)
     {
-        io.post(boost::bind(&announce_socket::invoke,
-                            this,
-                            ex.code(),
-                            handler));
+        boost::asio::post(io,
+                          boost::bind(&announce_socket::invoke,
+                                      this,
+                                      ex.code(),
+                                      handler));
     }
     // Other exceptions are propagated outwards
 }

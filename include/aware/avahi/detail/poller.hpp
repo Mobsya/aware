@@ -26,12 +26,12 @@ namespace detail
 class poller : public ::AvahiPoll
 {
 public:
-    poller(boost::asio::io_service&);
+    poller(boost::asio::io_context&);
 
-    boost::asio::io_service& get_io_service() const;
+    boost::asio::io_context& get_io_service() const;
 
 private:
-    boost::asio::io_service& io;
+    boost::asio::io_context& io;
 };
 
 } // namespace avahi

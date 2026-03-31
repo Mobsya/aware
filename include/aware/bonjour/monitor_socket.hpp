@@ -29,7 +29,7 @@ namespace detail { class monitor; }
 class monitor_socket
 {
 public:
-    monitor_socket(boost::asio::io_service&);
+    monitor_socket(boost::asio::io_context&);
     ~monitor_socket();
     typedef boost::function<void (const boost::system::error_code&)> async_listen_handler;
 
@@ -43,7 +43,7 @@ private:
                 async_listen_handler);
 
 private:
-    boost::asio::io_service& io;
+    boost::asio::io_context& io;
     detail::handle connection;
     aware::detail::native_socket socket;
     bool waiting;

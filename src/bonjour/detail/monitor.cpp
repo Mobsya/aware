@@ -30,7 +30,7 @@ namespace bonjour {
         // monitor
         //-----------------------------------------------------------------------------
 
-        monitor::monitor(boost::asio::io_service& io, detail::handle& connection) : io(io), connection(connection) {}
+        monitor::monitor(boost::asio::io_context& io, detail::handle& connection) : io(io), connection(connection) {}
 
         void monitor::listen(aware::contact& contact, async_listen_handler handler) {
             if(permanent_error) {
@@ -116,7 +116,7 @@ namespace bonjour {
         // monitor::scope
         //-----------------------------------------------------------------------------
 
-        monitor::scope::scope(boost::asio::io_service& io, monitor& self) : self(self) {}
+        monitor::scope::scope(boost::asio::io_context& io, monitor& self) : self(self) {}
 
         monitor::scope::~scope() {
             boost::system::error_code dummy;

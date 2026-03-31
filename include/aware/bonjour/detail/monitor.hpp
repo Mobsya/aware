@@ -48,7 +48,7 @@ namespace bonjour {
         public:
             typedef typename aware::bonjour::monitor_socket::async_listen_handler async_listen_handler;
 
-            monitor(boost::asio::io_service&, detail::handle&);
+            monitor(boost::asio::io_context&, detail::handle&);
 
             void listen(aware::contact&, async_listen_handler);
 
@@ -62,7 +62,7 @@ namespace bonjour {
             virtual void on_resolver_failure(const boost::system::error_code&);
 
         private:
-            boost::asio::io_service& io;
+            boost::asio::io_context& io;
             detail::handle& connection;
             std::string type;
             boost::optional<detail::browser> browser;
@@ -82,7 +82,7 @@ namespace bonjour {
                 typedef std::set<aware::contact> addition_container;
                 typedef std::multiset<aware::contact> removal_container;
 
-                scope(boost::asio::io_service&, monitor&);
+                scope(boost::asio::io_context&, monitor&);
                 ~scope();
 
                 void submit_appear(const aware::contact&);

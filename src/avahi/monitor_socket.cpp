@@ -36,7 +36,7 @@ class monitor : public browser::listener
     typedef aware::avahi::monitor_socket::async_listen_handler handler_type;
 
 public:
-    monitor(boost::asio::io_service& io,
+    monitor(boost::asio::io_context& io,
             aware::contact& contact)
         : contact_pointer(&contact)
     {
@@ -101,7 +101,7 @@ private:
 
 } // namespace detail
 
-monitor_socket::monitor_socket(boost::asio::io_service& io)
+monitor_socket::monitor_socket(boost::asio::io_context& io)
     : boost::asio::basic_io_object<avahi::service>(io)
 {
 }
@@ -111,10 +111,11 @@ void monitor_socket::async_listen(aware::contact& contact,
 {
     // Perform from io_service thread because the constructor of
     // detail::browser will invoke the first callback
-    get_io_service().post(boost::bind(&monitor_socket::do_async_listen,
-                                      this,
-                                      boost::ref(contact),
-                                      handler));
+    boost::asio::post(get_io_service(),
+                      boost::bind(&monitor_socket::do_async_listen,
+                                  this,
+                                  boost::ref(contact),
+                                  handler));
 }
 
 void monitor_socket::do_async_listen(aware::contact& contact,

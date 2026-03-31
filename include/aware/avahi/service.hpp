@@ -22,16 +22,16 @@ namespace aware
 namespace avahi
 {
 
-class service : public boost::asio::io_service::service
+class service : public boost::asio::execution_context::service
 {
 public:
-    static boost::asio::io_service::id id;
+    static boost::asio::execution_context::id id;
 
     struct implementation_type
     {
     };
 
-    explicit service(boost::asio::io_service& io);
+    explicit service(boost::asio::io_context& io);
 
     void construct(implementation_type&) {}
     void destroy(implementation_type&) {}
@@ -39,7 +39,7 @@ public:
     detail::client& get_client() { return client; }
 
 private:
-    virtual void shutdown_service() {}
+    void shutdown() override {}
 
 private:
     detail::poller poller;

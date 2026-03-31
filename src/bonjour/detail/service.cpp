@@ -22,10 +22,10 @@ namespace bonjour
 namespace detail
 {
 
-boost::asio::io_service::id service::id;
+boost::asio::execution_context::id service::id;
 
-service::service(boost::asio::io_service& io)
-    : boost::asio::io_service::service(io),
+service::service(boost::asio::io_context& io)
+    : boost::asio::execution_context::service(io),
       connection(detail::handle::with_connection)
 {
 }

@@ -39,7 +39,7 @@ class monitor_socket :
 public:
     typedef boost::function<void (const boost::system::error_code&)> async_listen_handler;
 
-    monitor_socket(boost::asio::io_service& io);
+    monitor_socket(boost::asio::io_context& io);
 
     void async_listen(aware::contact& contact,
                       async_listen_handler handler);

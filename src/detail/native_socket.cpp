@@ -15,7 +15,7 @@
 namespace aware {
 namespace detail {
 
-    native_socket::native_socket(boost::asio::io_service& io, native_handle_type handle) : socket(io) {
+    native_socket::native_socket(boost::asio::io_context& io, native_handle_type handle) : socket(io) {
         socket.assign(boost::asio::ip::tcp::v4(), handle);
     }
 
